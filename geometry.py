@@ -48,6 +48,7 @@ def starshape(N,ep,r,rp):
 
     h = 1.0/N
     t = h*np.linspace(0,N-1,N)
+    t.reshape(N,1)
     t = t + ep*h
     t = 2*np.pi*t
     tau = 2*np.pi*(t-0.5*h)
@@ -84,10 +85,12 @@ def tvshape(N,ep):
     t = t + ep*h
     tau = t - 0.5*h
 
-    g['midpt'] = np.array([(1+np.cos(2*np.pi*t))**2*np.cos(2*np.pi*t),
-                           (1+np.sin(2*np.pi*t))**2*np.sin(2*np.pi*t)]).T
-    g['brkpt'] = np.array([(1+np.cos(2*np.pi*tau))**2*np.cos(2*np.pi*tau),
-                           (1+np.sin(2*np.pi*tau))**2*np.sin(2*np.pi*tau)]).T
+    g = {}
+
+    g['midpt'] = np.array([(1+np.cos(2*np.pi*t)**2)*np.cos(2*np.pi*t),
+                           (1+np.sin(2*np.pi*t)**2)*np.sin(2*np.pi*t)]).T
+    g['brkpt'] = np.array([(1+np.cos(2*np.pi*tau)**2)*np.cos(2*np.pi*tau),
+                           (1+np.sin(2*np.pi*tau)**2)*np.sin(2*np.pi*tau)]).T
     R = np.array([[np.cos(np.pi/4), np.sin(np.pi/4)],
                  [-np.sin(np.pi/4), np.cos(np.pi/4)]])
     g['midpt'] = np.dot(g['midpt'],R)
