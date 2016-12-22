@@ -1,5 +1,5 @@
 # various deltaBEM geometries
-# last modified: December 20, 2016
+# last modified: December 21, 2016
 
 import numpy as np
 
@@ -104,4 +104,37 @@ def tvshape(N,ep):
     g['comp'] = np.array([1])
 
     return g
-                           
+
+def ellipse(N,ep,R,c):
+    """
+    Input:
+    N     : number of intervals
+    ep    : epsilon parameter
+    R     : [a,b] semiaxes  (np array)
+    c     : [cx, cy] center (np array)
+
+    Output:
+    g     : discrete geometry
+
+    last modified: December 21, 2016
+    """
+
+    h = 1.0/N
+    t = h*np.linspace(0,N-1,N)
+    t = t + ep*h
+    cost = np.cos(2*np.pi*t)
+    sint = np.sin(2*np.pi*t)
+    costau = np.cos(2*np.pi*(t-0.5*h))
+    sintau = np.sin(2*np.pi*(t-0.5*h))
+
+    g['midpt'] = np.array([c[0]+R[0]*cost,
+                           c[1]+R[1]*sint]).T
+    g['brkpt'] = np.array([c[0]+R[0]*costau,
+                           c[1]+R[1]*sintau]).T
+    g['xp']    = np.array([-R[0]*2*np.pi*sint,
+                           R[1]*2*np.pi*cost])
+    g['normal']= h*np.array([g['xp'][:,1], -g['xp'][:,0]])
+    g['next'] = np.append([np.linspace(2,N,N-1)],1)
+    g['comp'] = np.array([1])
+
+    return g
