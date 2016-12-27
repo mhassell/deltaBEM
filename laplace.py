@@ -1,7 +1,8 @@
 # operators and potentials for Laplace's equation
-# last modified: December 26, 2016
+# last modified: December 27, 2016
 
 import numpy as np
+import CalderonCalculusMatrices as CCP
 
 def LaplacePotentials(g,z):
     """
@@ -15,8 +16,8 @@ def LaplacePotentials(g,z):
     """
 
     # SL Pot 
-    DX = z[:,0] - g['midpt'][:,0].T
-    DY = z[:,1] - g['midpt'][:,1].T
+    DX = z[:,0][:,np.newaxis] - g['midpt'][:,0]
+    DY = z[:,1][:,np.newaxis] - g['midpt'][:,1]
     D = np.sqrt(DX**2 + DY**2)
     S = -1.0/(2*np.pi)*np.log(D)
 
@@ -28,7 +29,7 @@ def LaplacePotentials(g,z):
 
 def _CalderonCalculusLaplaceHalf(g,gp):
     """
-    Internal function to split up the computation on plus and minus geometries
+    Private function to split up the computation on plus and minus geometries
     
     Input:
     g:     principle geometry
@@ -43,29 +44,30 @@ def _CalderonCalculusLaplaceHalf(g,gp):
     """
     # V - SL operator
 
-    DX = gp['midpt'][np.newaxis,0].T - g['midpt'][:,0]
-    DY = gp['midpt'][np.newaxis,1].T - g['midpt'][:,1]
+    DX = gp['midpt'][:,0][:,np.newaxis] - g['midpt'][:,0]
+    DY = gp['midpt'][:,1][:,np.newaxis] - g['midpt'][:,1]
     D = np.sqrt(DX**2 + DY**2)
     V = -1.0/(2*np.pi)*np.log(D)
 
     # K - DL op
-    N = DX*g['normal'][np.newaxis,0].T + DY*g['normal'][:,1].T
+    
+    N = DX*g['normal'][:,0] + DY*g['normal'][:,1].T
     K = 1.0/(2*np.pi)*N/(D**2)
 
     # J - transposed DL op
-    N = gp['normal'][np.newaxis,0].T*DX + gp['normal'][np.newaxis,1].T*DY
+    N = gp['normal'][:,0][:,np.newaxis]*DX + gp['normal'][:,1][:,np.newaxis]*DY
     J = -1.0/(2*np.pi)*N/D**2
 
     # W - hypersingular op
-    DX = gp['brkpt'][np.newaxis,0] - g['brkpt'][np.newaxis,0].T
-    DY = gp['brkpt'][np.newaxis,1] - g['brkpt'][np.newaxis,1].T
+    DX = gp['brkpt'][:,0][:,np.newaxis] - g['brkpt'][:,0]
+    DY = gp['brkpt'][:,1][:,np.newaxis] - g['brkpt'][:,1]
     D = np.sqrt(DX**2 + DY**2)
-    W = -1.0/(2*np.pi)*(np.log(D[gp['next'],g['next'])) + np.log(D)
-                        -np.log(D(gp['next'],:)) - np.log(D(:,g['next'])))
+    W = -1.0/(2*np.pi)*(np.log(D[gp['next'],g['next']]) + np.log(D)
+                        -np.log(D[gp['next'],:]) - np.log(D[:,g['next']]))
 
     return (V,K,J,W)
 
-def CalderonCalculusLaplace(g,gp,gm):
+def CalderonCalculusLaplace(g,gp,gm,fork=0):
     """
     Input:
     g:     principle geometry
@@ -80,7 +82,39 @@ def CalderonCalculusLaplace(g,gp,gm):
      // To be added C:     rank Ncomp perturbation
     """
 
-    LP = _CalderonCalculusLaplaceHalf(g,gp)
-    LM = _CalderonCalculusLaplaceHalf(g,gm)
+    Lp = _CalderonCalculusLaplaceHalf(g,gp)
+    Lm = _CalderonCalculusLaplaceHalf(g,gm)
 
+    MATS = CCP.CalderonCalculusMatrices(g,fork)
+
+    # CC matrices
+    Q  = MATS[0]
+    Pp = MATS[2]
+    Pm = MATS[3]
+
+    # SL operator
+    Vp = Lp[0]
+    Vm = Lm[0]
+    V = np.dot(Pp,Vp) + np.dot(Pm,Vm)
+
+    # DL operator
+    Kp = Lp[1]
+    Km = Lm[1]
+    # numpy not yet aware of sparse arrays (this wastes memory!!)
+    tmp = np.dot(Pp,Kp)+np.dot(Pm,Km)
+    K = (Q.T.dot(tmp.T)).T
+    
+
+    # adjoint DL op
+    Jp = Lp[2]
+    Jm = Lm[2]
+    tmp = np.dot(Pp,Kp)+np.dot(Pm,Km)  # FIX ME, I WASTE MEMORY!
+    J = Q.dot(np.dot(Pp,Jp)+np.dot(Pm,Jm))
+
+    # hypersingular op
+    Wp = Lp[3]
+    Wm = Lm[3]
+    W = Q.T.dot((Q.dot(np.dot(Pp,Wp)+np.dot(Pm,Wm)).T)).T #WHAT A MESS
+
+    return (V,K,J,W)
     

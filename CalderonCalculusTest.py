@@ -1,0 +1,36 @@
+# function for testing right-hand-sides for BIEs
+# Last modified: December 27, 2016
+
+import numpy as np
+import CalderonCalculusMatrices as CCM
+
+def test(u, gradu, gp, gm, fork=0):
+    """
+    Input:
+    u:     function handle of two variables
+    gradu: function handle of two variables
+    gp,gm: companion geometries
+    fork:  averaged or mixed method
+
+    Output:
+    beta0:     testing of dirichlet BCs
+    beta1:     testing of neumann BCs
+    """
+    beta0p = u(gp['midpt'][:,0],gp['midpt'][:,1])
+    beta1p = np.sum(gradu(gp['midpt'][:,0],gp['midpt'][:,1])*gp['normal'],1)
+
+    beta0m = u(gm['midpt'][:,0],gm['midpt'][:,1])
+    beta1m = np.sum(gradu(gm['midpt'][:,0],gm['midpt'][:,1])*gm['normal'],1)
+
+    MATS = CCM.CalderonCalculusMatrices(gp,fork)
+
+    Q  = MATS[0]
+    Pp = MATS[2]
+    Pm = MATS[3]
+
+    beta0 = np.dot(Pp,beta0p)+np.dot(Pm,beta0m)
+    beta1 = Q.dot(np.dot(Pp,beta1p)+np.dot(Pm,beta1m))
+
+    return (beta0, beta1)
+
+    
