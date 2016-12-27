@@ -12,8 +12,6 @@ def LaplacePotentials(g,z):
     Output:
     S:     SL matrix
     D:     DL matrix
-    
-    Last modified: December 24, 2016
     """
 
     # SL Pot 
@@ -42,8 +40,6 @@ def _CalderonCalculusLaplaceHalf(g,gp):
     J:     tranposed double layer operator
     W:     hypersingular operator
      // To be added C:     rank Ncomp perturbation
-
-    last modified: December 24, 2016
     """
     # V - SL operator
 
@@ -76,11 +72,15 @@ def CalderonCalculusLaplace(g,gp,gm):
     gp:    plus geometry
     gm:    minus geometry
 
-    Output:
-    V:
-    K:
-    J:
-    W:
+   Output:
+    V:     single layer operator
+    K:     double layer operator
+    J:     tranposed double layer operator
+    W:     hypersingular operator
+     // To be added C:     rank Ncomp perturbation
     """
-    pass
 
+    LP = _CalderonCalculusLaplaceHalf(g,gp)
+    LM = _CalderonCalculusLaplaceHalf(g,gm)
+
+    
