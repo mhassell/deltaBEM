@@ -1,5 +1,5 @@
 # various deltaBEM geometries
-# last modified: December 21, 2016
+# last modified: December 27, 2016
 
 import numpy as np
 
@@ -11,8 +11,6 @@ def kite(N, ep):
 
     Output:
     g      discrete sampled geometry for a kite domain
-
-    last modified: December 20, 2016
     """
 
     h = 1.0/N
@@ -27,7 +25,7 @@ def kite(N, ep):
     g['xp']    = np.array([-2*np.pi*np.sin(2*np.pi*t)-4*np.pi*np.sin(4*np.pi*t),
                         4*np.pi*np.cos(2*np.pi*t)]).T
     g['normal']= h*np.array([g['xp'][:,1], -g['xp'][:,0]])
-    g['next'] = np.append([np.linspace(2,N,N-1)],1)
+    g['next'] = np.append([np.linspace(1,N-1,N-1)],0)
     g['comp'] = np.array([1])
 
     return g
@@ -42,8 +40,6 @@ def starshape(N,ep,r,rp):
 
     Output:
     g     discrete geometry
-
-    last modified: December 21, 2016
     """
 
     h = 1.0/N
@@ -63,7 +59,7 @@ def starshape(N,ep,r,rp):
     g['xp']    = 2*np.pi*np.array([(rpt*cost - rt*sint),
                            rpt*sint+rt*cost])
     g['normal'] = h*np.array([g['xp'][:,1], -g['xp'][:,0]])
-    g['next'] = np.append([np.linspace(2,N,N-1)],1)
+    g['next'] = np.append([np.linspace(1,N-1,N-1)],0)
     g['comp'] = np.array([1])
 
     return g
@@ -76,8 +72,6 @@ def tvshape(N,ep):
 
     Output:
     g     sampling of a smoothed square
-
-    last modified: December 21, 2016
     """
 
     h = 1.0/N
@@ -100,7 +94,7 @@ def tvshape(N,ep):
                    2*np.pi*(4*np.cos(2*np.pi*t)- 3*np.cos(2*np.pi*t)**3)]).T
     g['xp'] = np.dot(g['xp'], R)
     g['normal'] = h*np.array([g['xp'][:,1], -g['xp'][:,0]])
-    g['next'] = np.append([np.linspace(2,N,N-1)],1)
+    g['next'] = np.append([np.linspace(1,N-1,N-1)],0)
     g['comp'] = np.array([1])
 
     return g
@@ -115,8 +109,6 @@ def ellipse(N,ep,R,c):
 
     Output:
     g     : discrete geometry
-
-    last modified: December 21, 2016
     """
 
     h = 1.0/N
@@ -134,7 +126,7 @@ def ellipse(N,ep,R,c):
     g['xp']    = np.array([-R[0]*2*np.pi*sint,
                            R[1]*2*np.pi*cost])
     g['normal']= h*np.array([g['xp'][:,1], -g['xp'][:,0]])
-    g['next'] = np.append([np.linspace(2,N,N-1)],1)
+    g['next'] = np.append([np.linspace(1,N-1,N-1)],0)
     g['comp'] = np.array([1])
 
     return g
