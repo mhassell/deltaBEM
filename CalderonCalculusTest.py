@@ -16,11 +16,25 @@ def test(u, gradu, gp, gm, fork=0):
     beta0:     testing of dirichlet BCs
     beta1:     testing of neumann BCs
     """
+    #print u
+    #print gradu
+    
     beta0p = u(gp['midpt'][:,0],gp['midpt'][:,1])
-    beta1p = np.sum(gradu(gp['midpt'][:,0],gp['midpt'][:,1])*gp['normal'],1)
+    
+    ux = gradu[0]
+    uy = gradu[1]
+
+    uxp = ux(gp['midpt'][:,0],gp['midpt'][:,1])
+    uyp = uy(gp['midpt'][:,0],gp['midpt'][:,1])
+
+    beta1p = uxp*gp['normal'][:,0] + uyp*gp['normal'][:,1]
 
     beta0m = u(gm['midpt'][:,0],gm['midpt'][:,1])
-    beta1m = np.sum(gradu(gm['midpt'][:,0],gm['midpt'][:,1])*gm['normal'],1)
+
+    uxm = ux(gm['midpt'][:,0],gm['midpt'][:,1])
+    uym = uy(gm['midpt'][:,0],gm['midpt'][:,1])
+
+    beta1m = uxm*gm['normal'][:,0] + uym*gm['normal'][:,1]
 
     MATS = CCM.CalderonCalculusMatrices(gp,fork)
 

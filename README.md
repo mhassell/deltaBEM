@@ -12,8 +12,7 @@ Matlab implementation at www.math.udel.edu/~fjsayas/deltaBEM.
 
 TBD:
 
-1. Implement core functions: geometry, operators, and potentials as function handles
-(lambdas) of the complex paramter s.
+1. Implement core functions: operators, and potentials as function handles (lambdas) of the complex paramter s.
 
 2. Once steady state and time-harmonic methods are implemented, develop CQ code to move to time domain.
 
@@ -21,4 +20,4 @@ TBD:
 
 4. Need to figure out a replacement for the triangulateGeometry method (this uses PDEtool in Matlab).
 
-
+5. In CalderonCalculusMatrices.py and laplace.py need to fix using Pp and Pm with np.dot.  This will not work if Pp and Pm are sparse, and is pointless if they are scalar.
