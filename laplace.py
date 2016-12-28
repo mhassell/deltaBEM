@@ -51,7 +51,7 @@ def _CalderonCalculusLaplaceHalf(g,gp):
 
     # K - DL op
     
-    N = DX*g['normal'][:,0] + DY*g['normal'][:,1].T
+    N = DX*g['normal'][:,0][np.newaxis,:] + DY*g['normal'][:,1][np,newaxis,:]
     K = 1.0/(2*np.pi)*N/(D**2)
 
     # J - transposed DL op

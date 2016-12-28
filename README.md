@@ -21,3 +21,5 @@ TBD:
 4. Need to figure out a replacement for the triangulateGeometry method (this uses PDEtool in Matlab).
 
 5. In CalderonCalculusMatrices.py and laplace.py need to fix using Pp and Pm with np.dot.  This will not work if Pp and Pm are sparse, and is pointless if they are scalar.
+
+6. Need affine translations of geometries (not including inversions)
