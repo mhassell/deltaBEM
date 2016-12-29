@@ -63,26 +63,22 @@ def _CalderonCalculusLaplaceHalf(g,gp):
     DX = gp['brkpt'][:,0][:,np.newaxis] - g['brkpt'][:,0]
     DY = gp['brkpt'][:,1][:,np.newaxis] - g['brkpt'][:,1]
     D = np.sqrt(DX**2 + DY**2)
-    print "1: "
-    print np.log(D[gp['next'],g['next']])
-    print "2: "
-    print np.log(D[gp['next'],:])
-    print "3: "
-    print np.log(D[:,g['next']])
+
+    N = g['midpt'].shape[0]
     
-    W = -1.0/(2*np.pi)*(np.log(D[gp['next'],g['next']]) + np.log(D)
-                        -np.log(D[gp['next'],:]) - np.log(D[:,g['next']]))
+    W = -1.0/(2*np.pi)*(np.log(D[np.ix_(gp['next'],g['next'])]) + np.log(D)
+                        - np.log(D[np.ix_(gp['next'],np.arange(0,N))])
+                        - np.log(D[np.ix_(np.arange(0,N),g['next'])]))
 
     # C perturbation matrix
     lengths = np.sum(g['normal']**2,1)
     lengthsp = np.sum(gp['normal']**2,1)
-    N = g['midpt'].shape[0]
-    g['comp'] = np.append(g['comp'], N+1)
+
     C = np.zeros((N,N))
-    for c in range(0,g['comp'].shape[0]-1):
-        start = g['comp'][c]-1
-        end = g['comp'][c+1]-1
-        C[start:end,start:end] = lengthsp[start:end][:,np.newaxis]*lengths[start:end][np.newaxis,:]
+    if g['comp'].shape[0]>1:
+        print "Not yet implemented for multiple components"
+    else:
+        C = lengthsp[:,np.newaxis]*lengths[np.newaxis,:]
 
     return (V,K,J,W,C)
 
@@ -132,7 +128,7 @@ def CalderonCalculusLaplace(g,gp,gm,fork=0):
     # hypersingular op
     Wp = Lp[3]
     Wm = Lm[3]
-    W = (Q.T.dot((Q.dot(np.dot(Pp,Wp)+np.dot(Pm,Wm))).T)).T #WHAT A MESS
+    W = np.dot(Pp,Wp)+np.dot(Pm,Wm)
 
     # C
     Cp = Lp[4]

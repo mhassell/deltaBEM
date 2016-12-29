@@ -31,8 +31,6 @@ W = BIOs[3]
 C = BIOs[4]
 V[-1,-1] = 0
 
-print W
-
 MATS = CCM.CalderonCalculusMatrices(g)
 
 Q = MATS[0]
@@ -40,8 +38,8 @@ M = MATS[1]
 
 # exact solution
 f = lambda x,y : x/(x**2+y**2)
-fx = lambda x,y : 1/(x**2+y**2) - 2*x**2/(x**2+y**2)**2
-fy = lambda x,y : -2*x*y/(x**2+y**2)**2
+fx = lambda x,y : 1./(x**2+y**2) - 2*x**2/(x**2+y**2)**2
+fy = lambda x,y : -2.*x*y/(x**2+y**2)**2
 
 # testing the RHS
 RHS = CCT.test(f,[fx,fy],gp,gm)
@@ -52,14 +50,14 @@ beta0[0:N] = RHS[0]
 beta1 = RHS[1]
 
 # observation points outside the domain
-obs = np.array([[0,4],[4,0],[-4,2],[2,-4]])
+obs = np.array([[0.,4.],[4.,0.],[-4.,2.],[2.,-4.]])
 
 POTs = laplace.LaplacePotentials(g,obs)
 
 S = POTs[0]
 D = POTs[1]
 
-# discrete solutions (potential, normal vector, and DtN operator)
+# First experiment
 eta = np.linalg.solve(V, beta0)
 eta = eta[0:N,]
 uh = np.dot(S,eta)
@@ -71,18 +69,17 @@ Lambda = -0.5*eta + scipy.sparse.linalg.spsolve(M,np.dot(J,eta))
 
 # exact solution
 uexact = f(obs[:,0],obs[:,1])
-
-erru = np.max(np.abs(uexact - uh))
 beta0exact = f(g['midpt'][:,0],g['midpt'][:,1])
 beta1exact = (fx(g['midpt'][:,0],g['midpt'][:,1])*g['normal'][:,0]
               +fy(g['midpt'][:,0],g['midpt'][:,1])*g['normal'][:,1])
+
+erru = np.max(np.abs(uexact - uh))
 errLambda = np.max(np.abs(beta1exact-Lambda))*N
 errPhi    = np.max(np.abs(beta0exact-phi))
 
 errors = np.array([erru, errPhi, errLambda])
 
 # second experiment
-
 psi = -np.linalg.solve((W+C),beta1)
 phi = 0.5*psi+scipy.sparse.linalg.spsolve(M,np.dot(K,psi))
 phi = Q.dot(phi)
