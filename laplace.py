@@ -1,8 +1,9 @@
 # operators and potentials for Laplace's equation
-# last modified: December 27, 2016
+# last modified: December 29, 2016
 
 import numpy as np
 import CalderonCalculusMatrices as CCP
+import scipy.sparse
 
 def LaplacePotentials(g,z):
     """
@@ -19,13 +20,13 @@ def LaplacePotentials(g,z):
     DX = z[:,0][:,np.newaxis] - g['midpt'][:,0]
     DY = z[:,1][:,np.newaxis] - g['midpt'][:,1]
     D = np.sqrt(DX**2 + DY**2)
-    S = -1.0/(2*np.pi)*np.log(D)
+    SL = -1.0/(2*np.pi)*np.log(D)
 
     # DL Pot
-    N = DX*g['normal'][:,0].T + DY*g['normal'][:,1].T
-    DL = 1.0/(2*np.pi)*N/(D**2)
+    N = DX*g['normal'][:,0][np.newaxis,:] + DY*g['normal'][:,1][np.newaxis,:]
+    DL = (1.0/(2*np.pi))*N/(D*D)
 
-    return (S, D)
+    return (SL,DL)
 
 def _CalderonCalculusLaplaceHalf(g,gp):
     """
@@ -40,7 +41,7 @@ def _CalderonCalculusLaplaceHalf(g,gp):
     K:     double layer operator
     J:     tranposed double layer operator
     W:     hypersingular operator
-     // To be added C:     rank Ncomp perturbation
+    C:     rank Ncomp perturbation
     """
     # V - SL operator
 
@@ -62,10 +63,28 @@ def _CalderonCalculusLaplaceHalf(g,gp):
     DX = gp['brkpt'][:,0][:,np.newaxis] - g['brkpt'][:,0]
     DY = gp['brkpt'][:,1][:,np.newaxis] - g['brkpt'][:,1]
     D = np.sqrt(DX**2 + DY**2)
+    print "1: "
+    print np.log(D[gp['next'],g['next']])
+    print "2: "
+    print np.log(D[gp['next'],:])
+    print "3: "
+    print np.log(D[:,g['next']])
+    
     W = -1.0/(2*np.pi)*(np.log(D[gp['next'],g['next']]) + np.log(D)
                         -np.log(D[gp['next'],:]) - np.log(D[:,g['next']]))
 
-    return (V,K,J,W)
+    # C perturbation matrix
+    lengths = np.sum(g['normal']**2,1)
+    lengthsp = np.sum(gp['normal']**2,1)
+    N = g['midpt'].shape[0]
+    g['comp'] = np.append(g['comp'], N+1)
+    C = np.zeros((N,N))
+    for c in range(0,g['comp'].shape[0]-1):
+        start = g['comp'][c]-1
+        end = g['comp'][c+1]-1
+        C[start:end,start:end] = lengthsp[start:end][:,np.newaxis]*lengths[start:end][np.newaxis,:]
+
+    return (V,K,J,W,C)
 
 def CalderonCalculusLaplace(g,gp,gm,fork=0):
     """
@@ -79,7 +98,7 @@ def CalderonCalculusLaplace(g,gp,gm,fork=0):
     K:     double layer operator
     J:     tranposed double layer operator
     W:     hypersingular operator
-     // To be added C:     rank Ncomp perturbation
+    C:     rank Ncomp perturbation
     """
 
     Lp = _CalderonCalculusLaplaceHalf(g,gp)
@@ -102,8 +121,7 @@ def CalderonCalculusLaplace(g,gp,gm,fork=0):
     Km = Lm[1]
     # numpy not yet aware of sparse arrays (this wastes memory!!)
     tmp = np.dot(Pp,Kp)+np.dot(Pm,Km)
-    K = (Q.T.dot(tmp.T)).T
-    
+    K = (Q.T.dot(tmp.T)).T    
 
     # adjoint DL op
     Jp = Lp[2]
@@ -114,7 +132,12 @@ def CalderonCalculusLaplace(g,gp,gm,fork=0):
     # hypersingular op
     Wp = Lp[3]
     Wm = Lm[3]
-    W = Q.T.dot((Q.dot(np.dot(Pp,Wp)+np.dot(Pm,Wm)).T)).T #WHAT A MESS
+    W = (Q.T.dot((Q.dot(np.dot(Pp,Wp)+np.dot(Pm,Wm))).T)).T #WHAT A MESS
 
-    return (V,K,J,W)
+    # C
+    Cp = Lp[4]
+    Cm = Lm[4]
+    C = (Q.T.dot((Q.dot(np.dot(Pp,Cp)+np.dot(Pm,Cm))).T)).T
+
+    return (V,K,J,W,C)
     

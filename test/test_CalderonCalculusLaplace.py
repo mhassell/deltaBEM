@@ -1,5 +1,5 @@
 # a script to test the Laplace potentials and operators
-# last modified: December 27, 2016
+# last modified: December 29, 2016
 
 import geometry
 import laplace
@@ -7,8 +7,9 @@ import numpy as np
 import CalderonCalculusTest as CCT
 import CalderonCalculusMatrices as CCM
 import scipy.sparse.linalg
+import sys
 
-N = 320
+N = int(sys.argv[1])
 
 #g = geometry.kite(N,0)
 #gp = geometry.kite(N,1./6)
@@ -27,8 +28,10 @@ V[0:N,0:N]=BIOs[0]
 K = BIOs[1]
 J = BIOs[2]
 W = BIOs[3]
-# C = BIOs[4]
+C = BIOs[4]
 V[-1,-1] = 0
+
+print W
 
 MATS = CCM.CalderonCalculusMatrices(g)
 
@@ -49,7 +52,7 @@ beta0[0:N] = RHS[0]
 beta1 = RHS[1]
 
 # observation points outside the domain
-obs = np.array([[3.5, 0], [2., 2.5], [1, -2.25]])
+obs = np.array([[0,4],[4,0],[-4,2],[2,-4]])
 
 POTs = laplace.LaplacePotentials(g,obs)
 
@@ -76,7 +79,24 @@ beta1exact = (fx(g['midpt'][:,0],g['midpt'][:,1])*g['normal'][:,0]
 errLambda = np.max(np.abs(beta1exact-Lambda))*N
 errPhi    = np.max(np.abs(beta0exact-phi))
 
-print (erru, errPhi, errLambda)
+errors = np.array([erru, errPhi, errLambda])
+
+# second experiment
+
+psi = -np.linalg.solve((W+C),beta1)
+phi = 0.5*psi+scipy.sparse.linalg.spsolve(M,np.dot(K,psi))
+phi = Q.dot(phi)
+Lambda = scipy.sparse.linalg.spsolve(M,beta1)
+psi = Q.dot(psi)
+uh = np.dot(D,psi)
+
+erru = np.max(np.abs(uexact - uh))
+errLambda = np.max(np.abs(beta1exact-Lambda))*N
+errPhi    = np.max(np.abs(beta0exact-phi))
+
+errors = np.array([errors,[erru, errLambda, errPhi]])
+
+print errors
 
 
 
