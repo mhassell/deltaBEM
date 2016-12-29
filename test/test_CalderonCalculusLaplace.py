@@ -11,10 +11,6 @@ import sys
 
 N = int(sys.argv[1])
 
-#g = geometry.kite(N,0)
-#gp = geometry.kite(N,1./6)
-#gm = geometry.kite(N,-1./6)
-
 g  = geometry.ellipse(N,0,[1,1],[0,0])
 gp = geometry.ellipse(N,1./6,[1,1],[0,0])
 gm = geometry.ellipse(N,-1./6,[1,1],[0,0])

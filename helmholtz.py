@@ -4,7 +4,7 @@ import CalderonCalculusMatrices as CCM
 
 """
 A module for the Helmholtz Calderon Calculus
-Last modified: December 28, 2016
+Last modified: December 29, 2016
 """
 
 def HelmholtzPotentials(g,obs):
@@ -19,8 +19,8 @@ def HelmholtzPotentials(g,obs):
     """
 
     # SL Pot
-    RX = obs[:,0] - g['midpt'][:,0][np.newaxis,:]
-    RY = obs[:,1] - g['midpt'][:,1][np.newaxis,:]
+    RX = obs[:,0][:,np.newaxis] - g['midpt'][:,0]
+    RY = obs[:,1][:,np.newaxis] - g['midpt'][:,1]
     R = np.sqrt(RX**2 + RY**2)
     SL = lambda s: 1j/4*scipy.special.hankel1(0,1j*s*R)
 
@@ -31,7 +31,6 @@ def HelmholtzPotentials(g,obs):
 
     return (SL,DL)
     
-
 def _CalderonCalculusHelmholtzHalf(g,gp):
     """
     Input:
@@ -46,6 +45,8 @@ def _CalderonCalculusHelmholtzHalf(g,gp):
     Vn:    regular part of W
     """
 
+    N = g['midpt'].shape[0]
+
     # SL op and regular part of W
     DX = gp['midpt'][:,0][:,np.newaxis] - g['midpt'][:,0]
     DY = gp['midpt'][:,1][:,np.newaxis] - g['midpt'][:,1]
@@ -59,9 +60,9 @@ def _CalderonCalculusHelmholtzHalf(g,gp):
     DX = gp['brkpt'][:,0][:,np.newaxis] - g['brkpt'][:,0]
     DY = gp['brkpt'][:,1][:,np.newaxis] - g['brkpt'][:,1]
     D1 = np.sqrt(DX**2 + DY**2)
-    D2 = D1[gp['next'],:]
-    D3 = D1[:,g['next']]
-    D4 = D1[gp['next'],g['next']]
+    D2 = D1[np.ix_(gp['next'],np.arange(0,N))]
+    D3 = D1[np.ix_(np.arange(0,N),g['next'])]
+    D4 = D1[np.ix_(gp['next'],g['next'])]
     Wp = (lambda s: 1j/4* scipy.special.hankel1(0,1j*s*D1)
           -1j/4*scipy.special.hankel1(0,1j*s*D2)
           -1j/4*scipy.special.hankel1(0,1j*s*D3)
@@ -70,7 +71,7 @@ def _CalderonCalculusHelmholtzHalf(g,gp):
     # DL op
     DX = gp['midpt'][:,0][:,np.newaxis] - g['midpt'][:,0]
     DY = gp['midpt'][:,1][:,np.newaxis] - g['midpt'][:,1]
-    D = np.sqrt(X**2 + Y**2)
+    D = np.sqrt(DX**2 + DY**2)
     N = DX*g['normal'][:,0][np.newaxis,:] + DY*g['normal'][:,1][np.newaxis,:]
     N = N/D
     K = lambda s: -s/4*scipy.special.hankel1(1,1j*s*D)*N
@@ -123,6 +124,6 @@ def CalderonCalculusHelmholtz(g,gp,gm,fork=0):
     V = lambda s: Pp*Vp(s) + Pm*Vm(s)
     K = lambda s: Q.T.dot((Pp*Kp(s) + Pm*Km(s)).T).T
     J = lambda s: Q.dot(Pp*Jp(s) + Pm*Jm(s))
-    W = lambda s: Pp*Wpp(s) + Pm*Wpm(s) Q.dot((Q.T.dot(Pp*Vnp(s) + Pm*Vnm(s))).T)
+    W = lambda s: Pp*Wpp(s) + Pm*Wpm(s) + Q.dot((Q.T.dot(Pp*Vnp(s) + Pm*Vnm(s)).T).T)
 
     return (V,K,J,W)
