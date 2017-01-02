@@ -30,9 +30,9 @@ def planewave(f,fp,d,tlag,x,normal,T,M,flag):
     u = f((t-tlag)-direction[:,np.newaxis])
 
     if flag:
-        nor = normal[:,0]*d[:,0]+normal[:,1]*d[:,1]
+        nor = normal[:,0]*d[0]+normal[:,1]*d[1]
         dnu = fp((t-tlag)-direction[:,np.newaxis])
-        dnu = -dnu*nor
+        dnu = -dnu*nor[:,np.newaxis]
         return (u,dnu)
     
     return u

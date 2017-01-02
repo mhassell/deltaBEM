@@ -22,4 +22,6 @@ TBD:
 
 5. Need affine translations of geometries (not including inversions)
 
+6. Need to parallelize & symmetrize CQ code
+
 6. Long term goal: need to make np.solve and np.dot compatible with scipy sparse matrices.  
