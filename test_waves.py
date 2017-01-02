@@ -41,7 +41,7 @@ if opt==0:
 if opt==1:
     # cylindrical wave params
     f = lambda t: np.sin(2*np.pi*t)*(t>=0)
-    src = np.array([3.5, 3.5])
+    src = np.array([1.5, 1.5])
     obsgrid = np.linspace(0,3,N)
     xv, yv = np.meshgrid(obsgrid,obsgrid)
     obs = np.array([xv.reshape(N**2),yv.reshape(N**2)]).T

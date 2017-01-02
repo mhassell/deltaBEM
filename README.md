@@ -8,9 +8,9 @@ Matlab implementation at www.math.udel.edu/~fjsayas/deltaBEM.
 
 TBD:
 
-1. Develop CQ code to move to time domain.
+1. Convergence studies with CQ
 
-2. Include convergence studies to show the correctness of the methods and plots/movies to learn how to use matplotlib and the like.
+2. Plots/movies to learn how to use matplotlib and the like.
 
 3. Need to figure out a replacement for the triangulateGeometry method (this uses PDEtool in Matlab).
 
