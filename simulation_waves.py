@@ -23,8 +23,8 @@ gm = geometry.kite(N,-1./6)
 # signal
 T = 5
 kappa = float(T)/M
-direction = np.array([1,1])/np.sqrt(2)
-tlag = 1.5
+direction = np.array([1,0])
+tlag = 2
 signal = lambda t: np.sin(2*t)**9*(t>=0)
 signalp = lambda t: 18*np.sin(2*t)**8*np.cos(2*t)*(t>=0)
 uincp = waves.planewave(signal,signalp,direction,tlag,gp['midpt'],gp['normal'],T,M,0)
@@ -37,8 +37,8 @@ V = MATS[0]
 eta = CQ.CQequation(V,beta0,kappa)
 
 # postprocessing
-x = np.linspace(-2,2,100)
-y = np.linspace(-2,2,100)
+x = np.linspace(-4,4,100)
+y = np.linspace(-4,4,100)
 
 X,Y = np.meshgrid(x,y)
 
