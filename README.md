@@ -8,15 +8,11 @@ Matlab implementation at www.math.udel.edu/~fjsayas/deltaBEM.
 
 TBD:
 
-1. Convergence studies with CQ
+1. Convergence studies with CQ (SL is done, DL TBD)
 
-2. Plots/movies to learn how to use matplotlib and the like.
+2. Plots/movies to learn how to use matplotlib and the like (DONE! Could use some tweaking, but it works!)
 
-3. Need to figure out a replacement for the triangulateGeometry method (this uses PDEtool in Matlab).
-
-	MeshPy seems like a reasonable replacement.  Need to look into further.
-
-	https://mathema.tician.de/software/meshpy/
+3. Need to figure out a replacement for the triangulateGeometry.m method.  I have some notes on this floating around.
 
 4. In CalderonCalculusMatrices.py, laplace.py, and helmholtz.py need to fix using Pp and Pm with np.dot.  This will not work if Pp and Pm are sparse, and is pointless if they are scalar.
 
