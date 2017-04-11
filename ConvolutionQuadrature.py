@@ -112,13 +112,14 @@ def CQequation(F,g,kappa):
     print F(1).shape
     arguments = []
 
-    for j in range(M):
+    for j in range(M+1):
+        print h[:,j]
         arguments.append(zip(freqs,h[:,j],lambdas))
 
-    print arguments
+    #print arguments
 
-    pool = Pool(num_cores)
-    results = pool.map(solve_wrapper,arguments)
+    #pool = Pool(num_cores)
+    #results = pool.map(solve_wrapper,arguments)
 
     
     # for l in range(0,M+1):
