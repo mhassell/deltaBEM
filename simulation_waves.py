@@ -65,5 +65,5 @@ def animate(i):
     #cont = plt.contourf(X,Y,z)
     return cont
 
-anim = animation.FuncAnimation(fig,animate,frames=M)
-plt.show()
+#anim = animation.FuncAnimation(fig,animate,frames=M)
+#plt.show()
