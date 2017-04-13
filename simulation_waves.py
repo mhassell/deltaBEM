@@ -21,7 +21,7 @@ gp = geometry.kite(N,1./6)
 gm = geometry.kite(N,-1./6)
 
 # signal
-T = 5
+T = 10
 kappa = float(T)/M
 direction = np.array([1,0])
 tlag = 2
@@ -65,5 +65,5 @@ def animate(i):
     #cont = plt.contourf(X,Y,z)
     return cont
 
-#anim = animation.FuncAnimation(fig,animate,frames=M)
-#plt.show()
+anim = animation.FuncAnimation(fig,animate,frames=M,repeat=False)
+plt.show()
