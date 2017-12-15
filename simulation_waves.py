@@ -1,5 +1,5 @@
 # make a time domain simulation of a scattering problem
-# last modified: January 3, 2017
+# last modified: December 15, 2017
 
 import numpy as np
 import ConvolutionQuadrature as CQ

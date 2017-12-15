@@ -1,13 +1,13 @@
 """
 Convolution Quadrature routines
-Last modified: January 2, 2017
+Last modified: December 15, 2017
 """
 
 import numpy as np
 import sys
 #from joblib import Parallel, delayed
-import multiprocessing
-from pathos.multiprocessing import ProcessingPool as Pool
+#import multiprocessing
+#from pathos.multiprocessing import ProcessingPool as Pool
 
 def dot_wrapper(*args):
     #print args[0]
