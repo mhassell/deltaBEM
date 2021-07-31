@@ -44,6 +44,6 @@ uexact = waves.planewave(signal,signalp,direction,tlag,obs,[],T,M,0)
 
 error = np.max(np.abs(uh[:,M]-uexact[:,M]))
 
-print error
+print(error)
 
 

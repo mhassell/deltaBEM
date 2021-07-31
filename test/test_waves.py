@@ -55,7 +55,7 @@ if opt==1:
         z = cw[:,:,i]
         # cont = plt.pcolormesh(xv,yv,z)
         cont = plt.contourf(xv,yv,z)
-        print i
+        print(i)
         return cont
 
     anim = animation.FuncAnimation(fig,animate,frames=M)

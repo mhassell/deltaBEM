@@ -76,7 +76,7 @@ def _CalderonCalculusLaplaceHalf(g,gp):
 
     C = np.zeros((N,N))
     if g['comp'].shape[0]>1:
-        print "Not yet implemented for multiple components"
+        print("Not yet implemented for multiple components")
     else:
         C = lengthsp[:,np.newaxis]*lengths[np.newaxis,:]
 

@@ -16,11 +16,9 @@ def test(u, gradu, gp, gm, fork=0):
     beta0:     testing of dirichlet BCs
     beta1:     testing of neumann BCs
     """
-    #print u
-    #print gradu
-    
+
     beta0p = u(gp['midpt'][:,0],gp['midpt'][:,1])
-    
+
     ux = gradu[0]
     uy = gradu[1]
 
@@ -47,4 +45,4 @@ def test(u, gradu, gp, gm, fork=0):
 
     return (beta0, beta1)
 
-    
+

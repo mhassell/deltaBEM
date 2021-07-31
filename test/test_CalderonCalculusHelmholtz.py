@@ -97,4 +97,4 @@ errPhi    = np.max(np.abs(beta0exact-phi))
 
 errors = np.array([errors,[erru, errLambda, errPhi]])
 
-print errors
+print(errors)
