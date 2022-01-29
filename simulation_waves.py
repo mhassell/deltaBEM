@@ -1,5 +1,5 @@
 # make a time domain simulation of a scattering problem
-# last modified: December 15, 2017
+# last modified: January 29, 2022
 
 import numpy as np
 import ConvolutionQuadrature as CQ
@@ -11,59 +11,69 @@ import sys
 import matplotlib.pyplot as plt
 from matplotlib import animation
 
-# command line arguments
-N = int(sys.argv[1])
-M = int(sys.argv[2])
+if __name__ == "__main__":
+    try:
+        import dask
+        from dask.distributed import Client
+        
+        client = Client(n_workers=4)
+    except: 
+        pass
 
-# geometry
-g = geometry.kite(N,0)
-gp = geometry.kite(N,1./6)
-gm = geometry.kite(N,-1./6)
+    # command line arguments
+    N = int(sys.argv[1])
+    M = int(sys.argv[2])
 
-# signal
-T = 10
-kappa = float(T)/M
-direction = np.array([1,0])
-tlag = 2
-signal = lambda t: np.sin(2*t)**9*(t>=0)
-signalp = lambda t: 18*np.sin(2*t)**8*np.cos(2*t)*(t>=0)
-uincp = waves.planewave(signal,signalp,direction,tlag,gp['midpt'],gp['normal'],T,M,0)
-uincm = waves.planewave(signal,signalp,direction,tlag,gm['midpt'],gm['normal'],T,M,0)
-beta0 = -(0.5*uincp+0.5*uincm)
+    # geometry
+    g = geometry.kite(N,0)
+    gp = geometry.kite(N,1./6)
+    gm = geometry.kite(N,-1./6)
 
-MATS = helmholtz.CalderonCalculusHelmholtz(g,gp,gm)
-V = MATS[0]
+    # signal
+    T = 10
+    kappa = float(T)/M
+    direction = np.array([1,0])
+    tlag = 2
+    signal = lambda t: np.sin(2*t)**9*(t>=0)
+    signalp = lambda t: 18*np.sin(2*t)**8*np.cos(2*t)*(t>=0)
+    uincp = waves.planewave(signal,signalp,direction,tlag,gp['midpt'],gp['normal'],T,M,0)
+    uincm = waves.planewave(signal,signalp,direction,tlag,gm['midpt'],gm['normal'],T,M,0)
+    beta0 = -(0.5*uincp+0.5*uincm)
 
-eta = CQ.CQequation(V,beta0,kappa)
+    MATS = helmholtz.CalderonCalculusHelmholtz(g,gp,gm)
+    V = MATS[0]
 
-# postprocessing
-x = np.linspace(-4,4,100)
-y = np.linspace(-4,4,100)
+    eta = CQ.CQequation(V,beta0,kappa)
 
-X,Y = np.meshgrid(x,y)
+    # postprocessing
+    x = np.linspace(-4,4,100)
+    y = np.linspace(-4,4,100)
 
-obs = np.array([X.flatten(), Y.flatten()]).T
+    X,Y = np.meshgrid(x,y)
 
-POTS = helmholtz.HelmholtzPotentials(g,obs)
+    obs = np.array([X.flatten(), Y.flatten()]).T
 
-S = POTS[0]
+    POTS = helmholtz.HelmholtzPotentials(g,obs)
 
-uscat = CQ.CQforward(S,eta,kappa)
+    S = POTS[0]
 
-uscat = uscat.reshape(100,100,M+1)
-uinc = waves.planewave(signal,signalp,direction,tlag,obs,[],T,M,0)
-uinc = uinc.reshape(100,100,M+1)
+    uscat = CQ.CQforward(S,eta,kappa)
 
-utotal = uinc + uscat
+    uscat = uscat.reshape(100,100,M+1)
+    uinc = waves.planewave(signal,signalp,direction,tlag,obs,[],T,M,0)
+    uinc = uinc.reshape(100,100,M+1)
 
-fig = plt.figure()
-ax = plt.axes()
+    utotal = uinc + uscat
 
-def animate(i):
-    z = utotal[:,:,i]
-    cont = plt.pcolormesh(X,Y,z)
-    #cont = plt.contourf(X,Y,z)
-    return cont
+    fig = plt.figure()
+    ax = plt.axes()
 
-anim = animation.FuncAnimation(fig,animate,frames=M,repeat=False)
-plt.show()
+    def animate(i):
+        ax.plot(g['midpt'][:,0], g['midpt'][:,1],'k', linewidth=2)
+        z = utotal[:,:,i]
+        cont = plt.pcolormesh(X,Y,z)
+        #cont = plt.contourf(X,Y,z)
+        return cont
+
+    anim = animation.FuncAnimation(fig,animate,frames=M,repeat=False)
+    plt.show()
