@@ -10,15 +10,20 @@ import CalderonCalculusTest as CCT
 import sys
 import matplotlib.pyplot as plt
 from matplotlib import animation
+import time
+import config
 
 if __name__ == "__main__":
-    try:
+    t = time.time()
+    
+    if config.dask_flag:
         import dask
         from dask.distributed import Client
         
         client = Client(n_workers=4)
-    except: 
+    else: 
         pass
+    
 
     # command line arguments
     N = int(sys.argv[1])
@@ -30,7 +35,7 @@ if __name__ == "__main__":
     gm = geometry.kite(N,-1./6)
 
     # signal
-    T = 10
+    T = config.T
     kappa = float(T)/M
     direction = np.array([1,0])
     tlag = 2
@@ -64,6 +69,8 @@ if __name__ == "__main__":
     uinc = uinc.reshape(100,100,M+1)
 
     utotal = uinc + uscat
+
+    print(f"----------------------{time.time() - t} ----------------------")
 
     fig = plt.figure()
     ax = plt.axes()
