@@ -25,9 +25,10 @@ direction = np.array([1,1])/np.sqrt(2)
 tlag = 1.5
 signal = lambda t: np.sin(2*t)**9*(t>=0)
 signalp = lambda t: 18*np.sin(2*t)**8*np.cos(2*t)*(t>=0)
-uincp = waves.planewave(signal,signalp,direction,tlag,gp['midpt'],gp['normal'],T,M,0)
-uincm = waves.planewave(signal,signalp,direction,tlag,gm['midpt'],gm['normal'],T,M,0)
+uincp, graduincp = waves.planewave(signal,signalp,direction,tlag,gp['midpt'],gp['normal'],T,M,True)
+uincm, graduincm = waves.planewave(signal,signalp,direction,tlag,gm['midpt'],gm['normal'],T,M,True)
 beta0 = 0.5*uincp+0.5*uincm
+beta1 = 0.5*graduincp + 0.5*graduincm
 
 MATS = helmholtz.CalderonCalculusHelmholtz(g,gp,gm)
 V = MATS[0]
@@ -44,6 +45,6 @@ uexact = waves.planewave(signal,signalp,direction,tlag,obs,[],T,M,0)
 
 error = np.max(np.abs(uh[:,M]-uexact[:,M]))
 
-print(error)
+print(f"Single Layer error: {error}")
 
 

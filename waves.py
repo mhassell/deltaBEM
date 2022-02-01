@@ -18,7 +18,7 @@ def planewave(f,fp,d,tlag,x,normal,T,M,flag):
     normal: normal vectors (N x 2)
     T:      final time
     M:      number of time steps
-    flag:   compute only the wave (0) or it's normal deriv too (1)
+    flag:   compute only the wave False or it's normal deriv too True
 
     Output:
     u:      planewave (N x M+1)
@@ -46,7 +46,7 @@ def cylindricalwave(f,src,obs,normal,T,M,flag):
     normal: N x 2 array of vectors for normal obs
     T:     Final time
     M:     number of time steps
-    flag:  0 compute only the wave, 1 compute wave and normal deriv
+    flag:  False compute only the wave, True compute wave and normal deriv
     
     Output:
     u:     cylindrical wave observed on obs (N x M+1 array)

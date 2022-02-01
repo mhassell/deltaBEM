@@ -1,10 +1,13 @@
 deltaBEM in Python
 
-This isn't meant to supercede or in any way replace the original Matlab implementation.  
-This is just a learning tool for me that has some pretty cool capabilities.
-If you're reading this and would like to use deltaBEM for research, check out the
-Matlab implementation at www.math.udel.edu/~fjsayas/deltaBEM.
+This isn't meant to supercede or in any way replace the original Matlab implementation.  This is just a learning tool for me that has some pretty cool capabilities.
 
+If you're reading this and would like to use deltaBEM for research, check out the
+Matlab implementation at:
+
+https://team-pancho.github.io/deltaBEM/
+
+That has more tools and capabilities.
 
 TBD:
 
@@ -18,6 +21,6 @@ TBD:
 
 5. Need affine translations of geometries (not including inversions)
 
-6. Need to parallelize & symmetrize CQ code
+6. Need to parallelize (done) & symmetrize CQ code (dask is an optional path to take)
 
-6. Long term goal: need to make np.solve and np.dot compatible with scipy sparse matrices.  
+6. Long term goal: need to make np.solve and np.dot compatible with scipy sparse matrices.
